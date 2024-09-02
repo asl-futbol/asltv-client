@@ -119,18 +119,18 @@ const App: React.FC = () => {
     ];
 
     return (
-        <div className="flex flex-col gap-7 text-white">
-            <div className={"flex flex-col gap-7 fixed w-full bg-[#1B1B1B]"}>
+        <div className="flex flex-col gap-6 text-white">
+            <div className={"flex flex-col gap-6 fixed w-full bg-[#1B1B1B]"}>
                 <ReactPlayer
                     url={"https://youtu.be/ZfzffRjebWI?si=KMqJM67vI2mXW6PF"}
                     playing
                     controls
                     ref={videoRef as any}
                     width={"100%"}
-                    height={"250px"}
+                    height={"230px"}
                 />
 
-                <h1 className={"text-center text-yellow-500 text-2xl  mx-10"}>
+                <h1 className={"text-center text-yellow-500 text-xl mx-10"}>
                     Real Madrid vs Barcelona
                 </h1>
 
@@ -146,7 +146,7 @@ const App: React.FC = () => {
                 </div>
             </div>
 
-            <div className={"flex flex-col gap-6 px-5  overflow-y-auto"}>
+            <div className={"flex flex-col gap-6 px-5 overflow-y-auto"}>
                 {
                     sampleFutbollChatMessages.map((item) => (
                         <div key={item.id} className={"flex gap-2 items-center"}>
