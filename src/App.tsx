@@ -146,7 +146,7 @@ const App: React.FC = () => {
                 </div>
             </div>
 
-            <div className={"flex flex-col gap-6 px-5 overflow-y-auto"}>
+            <div className={"flex flex-col gap-6 px-5 mt-1 overflow-y-auto"}>
                 {
                     sampleFutbollChatMessages.map((item) => (
                         <div key={item.id} className={"flex gap-2 items-center"}>
