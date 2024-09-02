@@ -1,122 +1,64 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import ReactPlayer from 'react-player';
 import {MdOutlinePerson, MdSend} from "react-icons/md";
+import {io} from "socket.io-client";
+
+type MessageType = {
+    id: number,
+    name: string,
+    message: string,
+}
+
+const socket = io('http://localhost:3001');
 
 const App: React.FC = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
+    const [messages, setMessages] = useState<MessageType[]>([]);
+    const [inputMessage, setInputMessage] = useState<string>("");
 
-    const sampleFutbollChatMessages = [
-        {
-            id: 1,
-            name: "Juratbek",
-            message: "O'yin yaxshi bo'lyapti?"
-        },
-        {
-            id: 2,
-            name: "Asror",
-            message: "Messi maydonga tushdimi?"
-        },
-        {
-            id: 3,
-            name: "Jasur",
-            message: "Penalti bor ekan!"
-        },
-        {
-            id: 4,
-            name: "Olim",
-            message: "Hakim noto'g'ri qaror qildi."
-        },
-        {
-            id: 5,
-            name: "Sarvar",
-            message: "Qaysi jamoa oldinda?"
-        },
-        {
-            id: 6,
-            name: "Aziz",
-            message: "Yana qachon gol urishadi?"
-        },
-        {
-            id: 7,
-            name: "Doston",
-            message: "O'yin qiziqarli ketyapti."
-        },
-        {
-            id: 8,
-            name: "Ulug'bek",
-            message: "VAR qarorini kutyapmiz."
-        },
-        {
-            id: 9,
-            name: "Shohrux",
-            message: "Futbolchilar juda charchab qolishdi."
-        },
-        {
-            id: 10,
-            name: "Bekzod",
-            message: "Himoya chizig'i juda kuchli."
-        },
-        {
-            id: 11,
-            name: "Ibrohim",
-            message: "Stadion to'la ekan."
-        },
-        {
-            id: 12,
-            name: "Anvar",
-            message: "Yana bitta burchak to'pi."
-        },
-        {
-            id: 13,
-            name: "Murod",
-            message: "Darvozabon zo'r seyv qildi."
-        },
-        {
-            id: 14,
-            name: "Temur",
-            message: "O'yin oxiriga yaqin kelyapti."
-        },
-        {
-            id: 15,
-            name: "Mansur",
-            message: "O'yin qachon tugaydi?"
-        },
-        {
-            id: 16,
-            name: "Sherzod",
-            message: "Sudya juda qat'iy."
-        },
-        {
-            id: 17,
-            name: "Umid",
-            message: "Gol nima bo'ldi?"
-        },
-        {
-            id: 18,
-            name: "Otabek",
-            message: "Qaysi kanal o'yinni ko'rsatmoqda?"
-        },
-        {
-            id: 19,
-            name: "Kamol",
-            message: "Hujumchilar yaxshi o'ynashyapti."
-        },
-        {
-            id: 20,
-            name: "Sherali",
-            message: "Yana bitta hujum bo'lishi kerak."
-        },
-        {
-            id: 21,
-            name: "Sardor",
-            message: "Hakamni almashtirish kerak."
-        },
-        {
-            id: 22,
-            name: "Ilhom",
-            message: "Maydon juda shiddatli."
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        socket.on('chat history', (data: MessageType[]) => {
+            setMessages(data)
+        });
+
+        const handleMessage = (msg: { id: number; name: string; message: string; }) => {
+            setMessages((prevMessages) => {
+                if (prevMessages.some(message => message.id === msg.id)) {
+                    return prevMessages;
+                }
+                return [...prevMessages, msg];
+            });
+        };
+
+        socket.on('chat message', handleMessage);
+
+        return () => {
+            socket.off('chat message', handleMessage);
+        };
+    }, []);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const scrollToBottom = () => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
         }
-    ];
+    };
+
+    const handleMessage = (e: any) => {
+        e.preventDefault();
+
+        if (inputMessage.trim()) {
+            const newMessage = {id: Date.now(), name: 'User', message: inputMessage};
+            socket.emit('chat message', newMessage);
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
+            setInputMessage('');
+        }
+    }
 
     return (
         <div className="flex flex-col gap-6 text-white">
@@ -146,10 +88,10 @@ const App: React.FC = () => {
                 </div>
             </div>
 
-            <div className={"flex flex-col gap-6 px-5 mt-4 overflow-y-auto"}>
+            <div className={"flex flex-col gap-6 px-5 mt-96 mb-10 overflow-y-auto"}>
                 {
-                    sampleFutbollChatMessages.map((item) => (
-                        <div key={item.id} className={"flex gap-2 items-center"}>
+                    messages.map((item, index) => (
+                        <div key={index} className={"flex gap-2 items-center"}>
                             <div
                                 className={"bg-purple-700 font-semibold text-white p-3 size-9 flex justify-center items-center rounded-full"}
                             >
@@ -164,18 +106,23 @@ const App: React.FC = () => {
 
                     ))
                 }
+                <div ref={messagesEndRef}></div>
             </div>
 
-            <div
-                className={"fixed bottom-0 bg-[#1B1B1B] w-full px-3 flex justify-between gap-2 items-center border-t border-t-white/60"}>
+            <form
+                className={"fixed bottom-0 bg-[#1B1B1B] w-full px-3 flex justify-between gap-2 items-center border-t border-t-white/60"}
+                onSubmit={handleMessage}
+            >
                 <input
                     type="text"
                     className={"p-3 text-sm w-full bg-transparent outline-none"}
                     placeholder={"Fikr bildirish..."}
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
                 />
 
-                <MdSend className={"text-xl"}/>
-            </div>
+                <MdSend className={"text-xl"} onClick={handleMessage}/>
+            </form>
         </div>
     );
 };
