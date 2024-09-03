@@ -9,7 +9,6 @@ const App = () => {
                 <Route path={"/stream/:streamId"} element={<Stream/>}/>
             </Routes>
         </div>
-
     );
 };
 

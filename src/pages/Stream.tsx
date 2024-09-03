@@ -1,8 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
-import ReactPlayer from 'react-player';
 import {MdOutlineArrowBackIos, MdOutlinePerson, MdSend} from "react-icons/md";
 import {useNavigate} from "react-router-dom";
 import {io} from "socket.io-client";
+import Plyr from "plyr-react";
+import "plyr-react/plyr.css";
 
 type MessageType = {
     id: number,
@@ -16,7 +17,7 @@ const Stream: React.FC = () => {
     const [messages, setMessages] = useState<MessageType[]>([]);
     const [inputMessage, setInputMessage] = useState<string>("");
 
-    const videoRef = useRef<HTMLVideoElement>(null);
+    // const videoRef = useRef<HTMLVideoElement>(null);
     const navigate = useNavigate();
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -51,7 +52,7 @@ const Stream: React.FC = () => {
             messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
         }
     };
-
+    
     const handleMessage = (e: any) => {
         e.preventDefault();
 
@@ -73,13 +74,17 @@ const Stream: React.FC = () => {
                     </div>
                 </div>
 
-                <ReactPlayer
-                    url={"https://youtu.be/ZfzffRjebWI?si=KMqJM67vI2mXW6PF"}
-                    playing
-                    controls
-                    ref={videoRef as any}
-                    width={"100%"}
-                    height={"200px"}
+                <Plyr
+                    source={{
+                        type: "video",
+                        poster: "https://static0.givemesportimages.com/wordpress/wp-content/uploads/2024/03/barcelonavrealmadrid.jpg",
+                        title: "test",
+                        sources: [{
+                            src: "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4",
+                            type: "video/mp4",
+                            provider: "html5",
+                        }],
+                    }}
                 />
 
                 <div className={" flex flex-col px-5 border-b border-gray-400 py-3 "}>
@@ -94,7 +99,7 @@ const Stream: React.FC = () => {
                 </div>
             </div>
 
-            <div className={"flex flex-col gap-2 px-5 mt-[315px] mb-10 overflow-y-auto"}>
+            <div className={"flex flex-col gap-2 px-5 mt-[330px] mb-10 overflow-y-auto"}>
                 {
                     messages.map((item, index) => (
                         <div key={index} className={"flex gap-2 items-baseline"}>
