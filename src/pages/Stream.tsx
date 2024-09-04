@@ -1,47 +1,37 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {MdOutlineArrowBackIos, MdOutlinePerson, MdSend} from "react-icons/md";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {io} from "socket.io-client";
 import Plyr from "plyr-react";
 import "plyr-react/plyr.css";
 
 type MessageType = {
-    id: number,
+    userId: number,
     name: string,
     message: string,
 }
 
-const socket = io('http://localhost:3001');
+const user = {
+    id: 791944079,
+    name: "Juratbek"
+}
+
+const socket = io('http://localhost:3000');
 
 const Stream: React.FC = () => {
     const [messages, setMessages] = useState<MessageType[]>([]);
     const [inputMessage, setInputMessage] = useState<string>("");
 
-    // const videoRef = useRef<HTMLVideoElement>(null);
     const navigate = useNavigate();
-
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
+    const {streamId} = useParams();
+
     useEffect(() => {
-        socket.on('chat history', (data: MessageType[]) => {
-            setMessages(data)
-        });
-
-        const handleMessage = (msg: { id: number; name: string; message: string; }) => {
-            setMessages((prevMessages) => {
-                if (prevMessages.some(message => message.id === msg.id)) {
-                    return prevMessages;
-                }
-                return [...prevMessages, msg];
-            });
-        };
-
-        socket.on('chat message', handleMessage);
-
-        return () => {
-            socket.off('chat message', handleMessage);
-        };
-    }, []);
+        socket.emit("request_chat_history", (data: MessageType[]) => {
+            setMessages(data);
+        })
+    }, [streamId]);
 
     useEffect(() => {
         scrollToBottom();
@@ -52,17 +42,32 @@ const Stream: React.FC = () => {
             messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
         }
     };
-    
-    const handleMessage = (e: any) => {
+
+    const handleMessageSubmit = (e: any) => {
         e.preventDefault();
 
         if (inputMessage.trim()) {
-            const newMessage = {id: Date.now(), name: 'User', message: inputMessage};
-            socket.emit('chat message', newMessage);
+            const newMessage = {userId: user.id, name: user.name, message: inputMessage};
+            socket.emit('send_message', newMessage);
             setMessages((prevMessages) => [...prevMessages, newMessage]);
             setInputMessage('');
         }
-    }
+    };
+
+    const videoPlayer = useMemo(() => (
+        <Plyr
+            source={{
+                type: "video",
+                poster: "https://static0.givemesportimages.com/wordpress/wp-content/uploads/2024/03/barcelonavrealmadrid.jpg",
+                title: "test",
+                sources: [{
+                    src: "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4",
+                    type: "video/mp4",
+                    provider: "html5",
+                }],
+            }}
+        />
+    ), []);
 
     return (
         <div className="flex flex-col gap-1 text-white">
@@ -74,20 +79,9 @@ const Stream: React.FC = () => {
                     </div>
                 </div>
 
-                <Plyr
-                    source={{
-                        type: "video",
-                        poster: "https://static0.givemesportimages.com/wordpress/wp-content/uploads/2024/03/barcelonavrealmadrid.jpg",
-                        title: "test",
-                        sources: [{
-                            src: "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4",
-                            type: "video/mp4",
-                            provider: "html5",
-                        }],
-                    }}
-                />
+                {videoPlayer}
 
-                <div className={" flex flex-col px-5 border-b border-gray-400 py-3 "}>
+                <div className={"flex flex-col px-5 border-b border-gray-400 py-3"}>
                     <div className={"flex justify-between"}>
                         <h1 className={"text-xl"}>Chat</h1>
 
@@ -122,7 +116,7 @@ const Stream: React.FC = () => {
 
             <form
                 className={"fixed bottom-0 bg-[#1B1B1B] w-full px-3 flex justify-between gap-2 items-center border-t border-t-white/60"}
-                onSubmit={handleMessage}
+                onSubmit={handleMessageSubmit}
             >
                 <input
                     type="text"
@@ -132,7 +126,7 @@ const Stream: React.FC = () => {
                     onChange={(e) => setInputMessage(e.target.value)}
                 />
 
-                <MdSend className={"text-xl"} onClick={handleMessage}/>
+                <MdSend className={"text-xl"} onClick={handleMessageSubmit}/>
             </form>
         </div>
     );
