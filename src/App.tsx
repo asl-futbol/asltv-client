@@ -1,20 +1,15 @@
 import {Route, Routes} from "react-router-dom";
 import {Home, Stream} from "./pages";
 import WebApp from "@twa-dev/sdk";
+import {Forbidden} from "./components";
 
 const App = () => {
-
     const platform = WebApp.platform
+    const user = WebApp?.initDataUnsafe?.user
+    console.log(user)
 
     if (platform !== "android" && platform !== "ios" && platform !== "android_x") {
-        return (
-            <div className={"text-white"}>
-                <h1>You have to use from website!</h1>
-                <button className={"bg-blue-600 rounded p-2"} onClick={() => WebApp.openLink("https://kun.uz")}>
-                    open
-                </button>
-            </div>
-        )
+        return <Forbidden/>
     }
 
     return (
