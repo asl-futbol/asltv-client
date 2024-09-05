@@ -71,7 +71,7 @@ const Stream: React.FC = () => {
 
     return (
         <div className="flex flex-col gap-1 text-white">
-            <div className={"fixed w-full flex flex-col bg-[#272727]"}>
+            <div className={"max-lg:fixed w-full flex flex-col bg-[#272727]"}>
                 <div className={"flex gap-3  items-center h-full p-3 bg-[#2C2E36]"}>
                     <MdOutlineArrowBackIos className={"text-xl"} onClick={() => navigate('/')}/>
                     <div className={"flex flex-col gap-1"}>
@@ -93,7 +93,7 @@ const Stream: React.FC = () => {
                 </div>
             </div>
 
-            <div className={"flex flex-col gap-2 px-5 mt-[330px] mb-10 overflow-y-auto"}>
+            <div className={"flex flex-col gap-2 px-5 mt-3 max-lg:mt-[330px] mb-14 max-h-96 overflow-y-auto"}>
                 {
                     messages.map((item, index) => (
                         <div key={index} className={"flex gap-2 items-baseline"}>

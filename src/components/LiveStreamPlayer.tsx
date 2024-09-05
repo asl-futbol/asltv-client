@@ -1,76 +1,33 @@
-import {useEffect, useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import Hls from 'hls.js';
-import Plyr from 'plyr';
-import 'plyr/dist/plyr.css';
 
-const LiveStreamPlayer = () => {
-    const videoRef = useRef<HTMLVideoElement | null>(null);
-    const plyrRef = useRef<Plyr | null>(null);
-    const hlsRef = useRef<Hls | null>(null);
+const HLSVideoPlayer: React.FC<{ src: string }> = ({src}) => {
+    const videoRef = useRef<HTMLVideoElement | any>(null);
 
     useEffect(() => {
         const video = videoRef.current;
 
-        if (video) {
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource('http://localhost:8000/live/f574174f-8bbc-473a-ab10-8f74b7e17471/index.m3u8');
-                hls.attachMedia(video);
-
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    if (!plyrRef.current) {
-                        plyrRef.current = new Plyr(video, {
-                            controls: [
-                                'play-large',
-                                'play',
-                                'progress',
-                                'current-time',
-                                'mute',
-                                'volume',
-                                'fullscreen',
-                            ],
-                        });
-                    }
-                });
-                hlsRef.current = hls;
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = 'http://localhost:8000/live/anything/index.m3u8';
-                if (!plyrRef.current) {
-                    plyrRef.current = new Plyr(video, {
-                        controls: [
-                            'play-large',
-                            'play',
-                            'progress',
-                            'current-time',
-                            'mute',
-                            'volume',
-                            'fullscreen',
-                        ],
-                    });
-                }
-            } else {
-                console.error('This browser does not support HLS.');
-            }
+        if (video?.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = src;
+        } else if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(src);
+            hls.attachMedia(video);
+        } else {
+            console.error("HLS is not supported in this browser.");
         }
-
-        return () => {
-            if (hlsRef.current) {
-                hlsRef.current.destroy();
-            }
-            if (plyrRef.current) {
-                plyrRef.current.destroy();
-            }
-        };
-    }, []);
+    }, [src]);
 
     return (
         <video
             ref={videoRef}
-            className="plyr__video-embed"
-            playsInline
             controls
-        />
+            className="w-full h-96 max-h-[80vh]"
+            poster="https://static0.givemesportimages.com/wordpress/wp-content/uploads/2024/03/barcelonavrealmadrid.jpg"
+        >
+            Your browser does not support HLS playback.
+        </video>
     );
 };
 
-export default LiveStreamPlayer;
+export default HLSVideoPlayer
