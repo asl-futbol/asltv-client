@@ -1,19 +1,17 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {MdOutlineArrowBackIos, MdOutlinePerson, MdSend} from "react-icons/md";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {io} from "socket.io-client";
 import Plyr from "plyr-react";
 import "plyr-react/plyr.css";
+import WebApp from "@twa-dev/sdk";
+import {Forbidden} from "../components";
+import {useGetUser, UserType} from "../hooks/user.ts";
 
 type MessageType = {
     userId: number,
     name: string,
     message: string,
-}
-
-const user = {
-    id: 791944079,
-    name: "Juratbek"
 }
 
 const socket = io('http://localhost:3000');
@@ -26,6 +24,55 @@ const Stream: React.FC = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const {streamId} = useParams();
+    const [searchParams] = useSearchParams()
+
+    const userIdFromDesktopRedirect = searchParams.get("userId")
+
+    if (userIdFromDesktopRedirect) {
+        const getUserQuery = useGetUser(+userIdFromDesktopRedirect)
+        const userData: UserType = getUserQuery.data?.data?.info
+
+        if (!userData) {
+            return <Forbidden
+                action={"AUTH"}
+                data={{
+                    streamId: +streamId!,
+                    userId: 0
+                }}
+            />
+        }
+
+        localStorage.setItem("userId", String(userIdFromDesktopRedirect))
+        searchParams.delete("userId")
+    }
+
+    const platform = WebApp.platform
+    const user = WebApp.initDataUnsafe.user
+
+    if (user && ["ios", "android", "android_x"].includes(platform)) {
+        localStorage.setItem("userId", String(user.id))
+    }
+
+    const userId = localStorage.getItem("userId")
+
+    if (platform === "unknown" && !userId) {
+        return <Forbidden action={"AUTH"} data={{
+            streamId: +streamId!,
+            userId: 0
+        }}/>
+    }
+
+    if (platform !== "ios" && platform !== "android" && platform !== "android_x") {
+        if (!userId) {
+            return <Forbidden
+                action={"FORBIDDEN"}
+                data={{
+                    streamId: +streamId!,
+                    userId: user?.id!
+                }}
+            />
+        }
+    }
 
     useEffect(() => {
         socket.emit("request_chat_history", (data: MessageType[]) => {
@@ -47,7 +94,7 @@ const Stream: React.FC = () => {
         e.preventDefault();
 
         if (inputMessage.trim()) {
-            const newMessage = {userId: user.id, name: user.name, message: inputMessage};
+            const newMessage = {userId: 1, name: "Juratbek", message: inputMessage};
             socket.emit('send_message', newMessage);
             setMessages((prevMessages) => [...prevMessages, newMessage]);
             setInputMessage('');
