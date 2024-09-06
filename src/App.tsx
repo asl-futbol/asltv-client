@@ -4,7 +4,6 @@ import {useAuthUser, useGetUser, UserType} from "./hooks/user.ts";
 import WebApp from "@twa-dev/sdk";
 
 const App = () => {
-
     const user = WebApp.initDataUnsafe.user
 
     if (user) {
@@ -24,6 +23,7 @@ const App = () => {
         }
 
         localStorage.setItem("userId", String(user?.id!))
+        localStorage.setItem("name", String(user?.first_name!))
     }
 
     return (

@@ -10,6 +10,7 @@ import {useGetUser, UserType} from "../hooks/user.ts";
 
 type MessageType = {
     userId: number,
+    userPhoto: string,
     name: string,
     message: string,
 }
@@ -54,6 +55,8 @@ const Stream: React.FC = () => {
     }
 
     const userId = localStorage.getItem("userId")
+    const userName = localStorage.getItem("name")
+    const photo = localStorage.getItem("userPhoto")
 
     if (platform === "unknown" && !userId) {
         return <Forbidden action={"AUTH"} data={{
@@ -77,7 +80,17 @@ const Stream: React.FC = () => {
     useEffect(() => {
         socket.emit("request_chat_history", (data: MessageType[]) => {
             setMessages(data);
-        })
+        });
+    }, [streamId]);
+
+    useEffect(() => {
+        socket.on('receive_message', (message: MessageType) => {
+            setMessages((prevMessages) => [...prevMessages, message]);
+        });
+
+        return () => {
+            socket.off('receive_message');
+        };
     }, [streamId]);
 
     useEffect(() => {
@@ -94,9 +107,13 @@ const Stream: React.FC = () => {
         e.preventDefault();
 
         if (inputMessage.trim()) {
-            const newMessage = {userId: 1, name: "Juratbek", message: inputMessage};
+            const newMessage = {
+                userId: +userId!,
+                name: userName!,
+                userPhoto: photo && photo !== "null" ? photo : undefined!,
+                message: inputMessage
+            };
             socket.emit('send_message', newMessage);
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
             setInputMessage('');
         }
     };
@@ -140,15 +157,24 @@ const Stream: React.FC = () => {
                 </div>
             </div>
 
-            <div className={"flex flex-col gap-2 px-5 mt-3 max-lg:mt-[330px] mb-14 max-h-96 overflow-y-auto"}>
+            <div
+                className={"flex flex-col gap-2 px-5 mt-3 max-lg:mt-[330px] mb-14  overflow-y-auto"}>
                 {
                     messages.map((item, index) => (
-                        <div key={index} className={"flex gap-2 items-baseline"}>
-                            <div
-                                className={"bg-purple-700 text-xs font-semibold text-white p-3 size-5 flex justify-center items-center rounded-full"}
-                            >
-                                {item.name[0]}
-                            </div>
+                        <div key={index} className={"flex gap-3"}>
+                            {
+                                item.userPhoto ?
+                                    <img
+                                        src={item.userPhoto}
+                                        alt=""
+                                        className={"size-5 rounded-full"}
+                                    /> :
+                                    <div
+                                        className={"bg-purple-700 text-xs font-semibold text-white p-3 size-5 flex justify-center items-center rounded-full"}
+                                    >
+                                        {item.name[0]}
+                                    </div>
+                            }
 
                             <div className={"flex gap-2"}>
                                 <span className={"text-xs text-gray-400 leading-4"}>{item.name} <span
