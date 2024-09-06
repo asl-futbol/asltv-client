@@ -16,6 +16,7 @@
     "@types/sjcl": "^1.0.34",
     "axios": "^1.7.7",
     "crypto-js": "^4.2.0",
+    "dateformat": "^5.0.3",
     "express": "^4.19.2",
     "flowplayer": "^7.2.7",
     "hls.js": "^1.5.15",
@@ -36,6 +37,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@types/dateformat": "^5.0.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@types/simple-peer": "^9.11.8",

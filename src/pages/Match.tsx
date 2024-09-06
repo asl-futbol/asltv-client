@@ -2,11 +2,13 @@ import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {MdOutlineArrowBackIos, MdOutlinePerson, MdSend} from "react-icons/md";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {io} from "socket.io-client";
-import Plyr from "plyr-react";
 import "plyr-react/plyr.css";
 import WebApp from "@twa-dev/sdk";
-import {Forbidden} from "../components";
+import {Forbidden, VideoPlayer} from "../components";
 import {useGetUser, UserType} from "../hooks/user.ts";
+import {useGetSingleMatch} from "../hooks/match.ts";
+import {MatchType} from "../types/match";
+import Loader from "../components/loader.tsx";
 
 type MessageType = {
     userId: number,
@@ -17,15 +19,23 @@ type MessageType = {
 
 const socket = io(import.meta.env.VITE_API_URL!);
 
-const Stream: React.FC = () => {
+const Match: React.FC = () => {
     const [messages, setMessages] = useState<MessageType[]>([]);
     const [inputMessage, setInputMessage] = useState<string>("");
 
     const navigate = useNavigate();
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const {streamId} = useParams();
+    const {matchId} = useParams();
     const [searchParams] = useSearchParams()
+
+    if (!matchId) {
+        return <h1>Match ID is missed!</h1>
+    }
+
+    const getSingleMatchQuery = useGetSingleMatch(+matchId!)
+    const singleMatchData: MatchType = getSingleMatchQuery.data?.data?.info
+
 
     const userIdFromDesktopRedirect = searchParams.get("userId")
 
@@ -37,7 +47,7 @@ const Stream: React.FC = () => {
             return <Forbidden
                 action={"AUTH"}
                 data={{
-                    streamId: +streamId!,
+                    matchId: +matchId!,
                     userId: 0
                 }}
             />
@@ -60,7 +70,7 @@ const Stream: React.FC = () => {
 
     if (platform === "unknown" && !userId) {
         return <Forbidden action={"AUTH"} data={{
-            streamId: +streamId!,
+            matchId: +matchId!,
             userId: 0
         }}/>
     }
@@ -70,7 +80,7 @@ const Stream: React.FC = () => {
             return <Forbidden
                 action={"FORBIDDEN"}
                 data={{
-                    streamId: +streamId!,
+                    matchId: +matchId!,
                     userId: user?.id!
                 }}
             />
@@ -81,7 +91,7 @@ const Stream: React.FC = () => {
         socket.emit("request_chat_history", (data: MessageType[]) => {
             setMessages(data);
         });
-    }, [streamId]);
+    }, [matchId]);
 
     useEffect(() => {
         socket.on('receive_message', (message: MessageType) => {
@@ -91,17 +101,19 @@ const Stream: React.FC = () => {
         return () => {
             socket.off('receive_message');
         };
-    }, [streamId]);
+    }, [matchId]);
 
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
 
     const scrollToBottom = () => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
         }
     };
+
 
     const handleMessageSubmit = (e: any) => {
         e.preventDefault();
@@ -118,28 +130,30 @@ const Stream: React.FC = () => {
         }
     };
 
+
     const videoPlayer = useMemo(() => (
-        <Plyr
-            source={{
-                type: "video",
-                poster: "https://static0.givemesportimages.com/wordpress/wp-content/uploads/2024/03/barcelonavrealmadrid.jpg",
-                title: "test",
-                sources: [{
-                    src: "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4",
-                    type: "video/mp4",
-                    provider: "html5",
-                }],
-            }}
-        />
-    ), []);
+        <VideoPlayer streamKey={singleMatchData?.stream?.key} matchStatus={singleMatchData?.status}/>
+    ), [singleMatchData?.stream?.key]);
+
+    if (getSingleMatchQuery.isLoading) {
+        return <Loader/>
+    }
+
+    if (getSingleMatchQuery.isError) {
+        return <h1 className={"text-center text-white/80"}>Nimadir xato ketdi, keyinroq qayta urining!</h1>
+    }
 
     return (
         <div className="flex flex-col gap-1 text-white">
             <div className={"max-lg:fixed w-full flex flex-col bg-[#272727]"}>
                 <div className={"flex gap-3  items-center h-full p-3 bg-[#2C2E36]"}>
-                    <MdOutlineArrowBackIos className={"text-xl"} onClick={() => navigate('/')}/>
+                    <MdOutlineArrowBackIos className={"text-xl cursor-pointer"} onClick={() => navigate('/')}/>
                     <div className={"flex flex-col gap-1"}>
-                        <span className={"text-base font-bold text-white/90"}>Real Madrid vs Barcelona</span>
+                        <span
+                            className={"text-base font-bold text-white/90"}
+                        >
+                            {singleMatchData?.homeClub?.name} vs {singleMatchData?.awayClub?.name}
+                        </span>
                     </div>
                 </div>
 
@@ -158,7 +172,7 @@ const Stream: React.FC = () => {
             </div>
 
             <div
-                className={"flex flex-col gap-2 px-5 mt-3 max-lg:mt-[330px] mb-14  overflow-y-auto"}>
+                className={"flex flex-col max-lg:gap-2 gap-3 px-5 mt-4 max-lg:mt-[330px] mb-14 overflow-y-auto"}>
                 {
                     messages.map((item, index) => (
                         <div key={index} className={"flex gap-3"}>
@@ -167,7 +181,7 @@ const Stream: React.FC = () => {
                                     <img
                                         src={item.userPhoto}
                                         alt=""
-                                        className={"size-5 rounded-full"}
+                                        className={"max-lg:size-5 size-6 rounded-full select-none pointer-events-none"}
                                     /> :
                                     <div
                                         className={"bg-purple-700 text-xs font-semibold text-white p-3 size-5 flex justify-center items-center rounded-full"}
@@ -177,8 +191,10 @@ const Stream: React.FC = () => {
                             }
 
                             <div className={"flex gap-2"}>
-                                <span className={"text-xs text-gray-400 leading-4"}>{item.name} <span
-                                    className={"ml-[2px] text-white"}>{item.message}</span></span>
+                                <div className={"max-lg:text-xs text-sm text-gray-400 leading-4"}>
+                                    {item.name}
+                                    <span className={"ml-[2px] text-white"}>{item.message}</span>
+                                </div>
                             </div>
                         </div>
 
@@ -188,7 +204,7 @@ const Stream: React.FC = () => {
             </div>
 
             <form
-                className={"fixed bottom-0 bg-[#1B1B1B] w-full px-3 flex justify-between gap-2 items-center border-t border-t-white/60"}
+                className={`${singleMatchData?.status === "SCHEDULED" && "hidden"} fixed bottom-0 bg-[#1B1B1B] w-full px-3 flex justify-between gap-2 items-center border-t border-t-white/60`}
                 onSubmit={handleMessageSubmit}
             >
                 <input
@@ -205,4 +221,4 @@ const Stream: React.FC = () => {
     );
 };
 
-export default Stream;
+export default Match;

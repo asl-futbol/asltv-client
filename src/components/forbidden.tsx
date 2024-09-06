@@ -3,11 +3,11 @@ import {IoMdOpen} from "react-icons/io";
 import {useCreateEncrypt} from "../hooks/encrypt.ts";
 import {encryptData} from "../utils/crypto.ts";
 
-const Forbidden = ({action, data}: { action: "FORBIDDEN" | "AUTH", data?: { streamId: number, userId: number } }) => {
+const Forbidden = ({action, data}: { action: "FORBIDDEN" | "AUTH", data?: { matchId: number, userId: number } }) => {
     const createEncryptMutation = useCreateEncrypt()
 
     const onClickToAuth = async () => {
-        const encrtptedData = encryptData(`match=${data?.streamId}&platform=TELEGRAM_BOT`)
+        const encrtptedData = encryptData(`match=${data?.matchId}&platform=TELEGRAM_BOT`)
         createEncryptMutation.mutate(String(encrtptedData))
     }
 
@@ -16,7 +16,7 @@ const Forbidden = ({action, data}: { action: "FORBIDDEN" | "AUTH", data?: { stre
         window.location.href = authRedirectUrl
     }
 
-    const openWebsiteRedirectUrl = `${import.meta.env.VITE_WEBSITE_URL}/stream/${data?.streamId}`
+    const openWebsiteRedirectUrl = `${import.meta.env.VITE_WEBSITE_URL}/stream/${data?.matchId}`
 
     return (
         <div className={"flex justify-center items-center h-screen text-white"}>

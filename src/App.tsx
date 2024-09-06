@@ -1,5 +1,5 @@
 import {Route, Routes} from "react-router-dom";
-import {Home, Redirect, Stream} from "./pages";
+import {Home, Match, Redirect} from "./pages";
 import {useAuthUser, useGetUser, UserType} from "./hooks/user.ts";
 import WebApp from "@twa-dev/sdk";
 
@@ -30,7 +30,7 @@ const App = () => {
         <div className={"text-white"}>
             <Routes>
                 <Route index element={<Home/>}/>
-                <Route path={"/stream/:streamId"} element={<Stream/>}/>
+                <Route path={"/match/:matchId"} element={<Match/>}/>
                 <Route path={"/redirect"} element={<Redirect/>}/>
             </Routes>
         </div>

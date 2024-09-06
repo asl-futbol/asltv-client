@@ -5,11 +5,6 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
-    const accessToken = localStorage.getItem("accessToken");
-
-    config.headers["x-api-key"] = `test-api-key`;
-    config.headers.Authorization = `Bearer ${accessToken}`;
-
     return config;
 });
 
