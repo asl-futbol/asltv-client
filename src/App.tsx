@@ -26,7 +26,6 @@ const App = () => {
         localStorage.setItem("userId", String(user?.id!))
     }
 
-
     return (
         <div className={"text-white"}>
             <Routes>
