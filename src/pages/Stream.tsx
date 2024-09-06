@@ -14,7 +14,7 @@ type MessageType = {
     message: string,
 }
 
-const socket = io('http://localhost:3000');
+const socket = io(import.meta.env.VITE_API_URL!);
 
 const Stream: React.FC = () => {
     const [messages, setMessages] = useState<MessageType[]>([]);
