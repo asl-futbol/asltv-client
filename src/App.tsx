@@ -6,12 +6,11 @@ import WebApp from "@twa-dev/sdk";
 const App = () => {
     const user = WebApp.initDataUnsafe.user
     const getUserQuery = useGetUser(+user?.id!, user ? true : false)
+    const authUserMutation = useAuthUser()
 
     if (user) {
         const userData: UserType = getUserQuery.data?.data?.info
-
-        const authUserMutation = useAuthUser()
-
+        
         if (!userData) {
             authUserMutation.mutate({
                 id: user?.id!,
