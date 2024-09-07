@@ -9,6 +9,7 @@ import {useGetUser, UserType} from "../hooks/user.ts";
 import {useGetSingleMatch} from "../hooks/match.ts";
 import {MatchType} from "../types/match";
 import Loader from "../components/loader.tsx";
+import {formatViewers} from '../utils/formatters.ts';
 
 type MessageType = {
     userId: number,
@@ -17,7 +18,7 @@ type MessageType = {
     message: string,
 }
 
-const socket = io(import.meta.env.VITE_API_URL!);
+const socket = io(import.meta.env.VITE_API_URL!)
 
 const Match: React.FC = () => {
     const [messages, setMessages] = useState<MessageType[]>([]);
@@ -35,7 +36,6 @@ const Match: React.FC = () => {
 
     const getSingleMatchQuery = useGetSingleMatch(+matchId!)
     const singleMatchData: MatchType = getSingleMatchQuery.data?.data?.info
-
 
     const userIdFromDesktopRedirect = searchParams.get("userId")
 
@@ -91,9 +91,7 @@ const Match: React.FC = () => {
         socket.emit("request_chat_history", (data: MessageType[]) => {
             setMessages(data);
         });
-    }, [matchId]);
 
-    useEffect(() => {
         socket.on('receive_message', (message: MessageType) => {
             setMessages((prevMessages) => [...prevMessages, message]);
         });
@@ -107,13 +105,11 @@ const Match: React.FC = () => {
         scrollToBottom();
     }, [messages]);
 
-
     const scrollToBottom = () => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({behavior: 'smooth'});
         }
     };
-
 
     const handleMessageSubmit = (e: any) => {
         e.preventDefault();
@@ -129,7 +125,6 @@ const Match: React.FC = () => {
             setInputMessage('');
         }
     };
-
 
     const videoPlayer = useMemo(() => (
         <VideoPlayer streamKey={singleMatchData?.stream?.key} matchStatus={singleMatchData?.status}/>
@@ -159,16 +154,19 @@ const Match: React.FC = () => {
 
                 {videoPlayer}
 
-                <div className={"flex flex-col px-5 border-b border-gray-400 py-3"}>
-                    <div className={"flex justify-between"}>
-                        <h1 className={"text-xl"}>Chat</h1>
+                {
+                    singleMatchData?.status === "LIVE" &&
+                    <div className={"flex flex-col px-5 border-b border-gray-400 py-3"}>
+                        <div className={"flex justify-between"}>
+                            <h1 className={"text-xl"}>Chat</h1>
 
-                        <div className={"flex gap-1 items-center text-gray-400"}>
-                            <MdOutlinePerson/>
-                            <span className={"text-sm"}>2.3 ming kuzatuvchi </span>
+                            <div className={" gap-1 items-center text-gray-400 hidden"}>
+                                <MdOutlinePerson/>
+                                <span className={"text-sm"}>{formatViewers(1200)} kuzatuvchi </span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
             </div>
 
             <div
