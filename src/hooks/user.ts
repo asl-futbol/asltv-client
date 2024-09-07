@@ -23,11 +23,12 @@ export const useAuthUser = () => {
     })
 }
 
-export const useGetUser = (userId: number) => {
+export const useGetUser = (userId: number, isEnabled: boolean = true) => {
     return useQuery({
         queryKey: [QueryKeys.GET_USER],
         queryFn: async () => {
             return await api.get(`/user/${userId}`)
-        }
+        },
+        enabled: isEnabled
     })
 }
