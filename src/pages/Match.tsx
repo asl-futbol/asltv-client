@@ -202,7 +202,7 @@ const Match: React.FC = () => {
             </div>
 
             <form
-                className={`${singleMatchData?.status === "SCHEDULED" && "hidden"} fixed bottom-0 bg-[#1B1B1B] w-full px-3 flex justify-between gap-2 items-center border-t border-t-white/60`}
+                className={`fixed bottom-0 bg-[#1B1B1B] w-full px-3 flex justify-between gap-2 items-center border-t border-t-white/60`}
                 onSubmit={handleMessageSubmit}
             >
                 <input
