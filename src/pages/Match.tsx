@@ -43,7 +43,7 @@ const Match: React.FC = () => {
         const getUserQuery = useGetUser(+userIdFromDesktopRedirect)
         const userData: UserType = getUserQuery.data?.data?.info
 
-        if (!userData) {
+        if (!userData || getUserQuery.isError) {
             return <Forbidden
                 action={"AUTH"}
                 data={{
@@ -52,30 +52,33 @@ const Match: React.FC = () => {
                 }}
             />
         }
-
-        localStorage.setItem("userId", String(userIdFromDesktopRedirect))
-        searchParams.delete("userId")
     }
 
     const platform = WebApp.platform
     const user = WebApp.initDataUnsafe.user
 
-    if (user && ["ios", "android", "android_x"].includes(platform)) {
-        localStorage.setItem("userId", String(user.id))
-    }
-
     const userId = localStorage.getItem("userId")
     const userName = localStorage.getItem("name")
     const photo = localStorage.getItem("userPhoto")
 
-    if (platform === "unknown" && !userId) {
+    if (!userId && !user) {
         return <Forbidden action={"AUTH"} data={{
             matchId: +matchId!,
             userId: 0
         }}/>
     }
 
-    if (platform !== "ios" && platform !== "android" && platform !== "android_x") {
+    if (platform === "tdesktop" || platform === "macos" || platform === "weba" || platform === "webk" || platform === "unigram" || platform === "unknown") {
+        return <Forbidden
+            action={"FORBIDDEN"}
+            data={{
+                matchId: +matchId!,
+                userId: user?.id!
+            }}
+        />
+    }
+
+    if (platform !== "ios" && platform !== "android" && platform !== "android_x" && platform === "unknown") {
         if (!userId) {
             return <Forbidden
                 action={"FORBIDDEN"}

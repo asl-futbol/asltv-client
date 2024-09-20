@@ -12,8 +12,7 @@ const Forbidden = ({action, data}: { action: "FORBIDDEN" | "AUTH", data?: { matc
     }
 
     if (createEncryptMutation.isSuccess) {
-        const authRedirectUrl = `${import.meta.env.VITE_AUTH_BOT_URL}?start=auth_${createEncryptMutation.data.data?.info?.id}`
-        window.location.href = authRedirectUrl
+        window.location.href = `${import.meta.env.VITE_AUTH_BOT_URL}?start=auth_${createEncryptMutation.data.data?.info?.id}`
     }
 
     const openWebsiteRedirectUrl = `${import.meta.env.VITE_WEBSITE_URL}/stream/${data?.matchId}`

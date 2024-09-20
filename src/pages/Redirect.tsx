@@ -14,7 +14,6 @@ const Redirect = () => {
     const userPhoto = params.get('userPhoto');
     const name = params.get('name');
 
-
     if (!matchId) {
         return <h1 className={"text-white"}>Match ID is missed!</h1>
     }
@@ -25,13 +24,13 @@ const Redirect = () => {
 
     localStorage.setItem("userId", String(userId))
 
-    if (userPhoto && userPhoto !== undefined && userPhoto !== null) {
+    if (userPhoto) {
         localStorage.setItem("userPhoto", String(userPhoto))
     }
     
     localStorage.setItem("name", String(name))
 
-    return <Navigate to={`/stream/${matchId}`}/>
+    return <Navigate to={`/match/${matchId}`}/>
 };
 
 export default Redirect;

@@ -9,6 +9,7 @@ export type UserType = {
     name?: string;
     surname?: string,
     username?: string
+    photo?: string
     registeredBy: RegisteredBy,
     createdAt?: string,
     updatedAt?: string,
