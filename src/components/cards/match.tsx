@@ -1,11 +1,24 @@
-import {Link} from "react-router-dom";
-import {MatchType} from "../../types/match";
+import {useNavigate} from "react-router-dom";
+import {MatchStatus, MatchType} from "../../types/match";
 import dateFormat from "dateformat";
 
 const MatchCard = ({data}: { data: MatchType }) => {
+
+    const navigate = useNavigate();
+
+    const onNavigate = (id: number, status: MatchStatus) => {
+        if (status !== "LIVE") {
+            return null
+        }
+
+        navigate(`/match/${id}`);
+    }
+
     return (
-        <Link to={`/match/${data?.id}`}
-              className={`select-none grid grid-cols-3 gap-5 cursor-pointer text-base  items-center border-2 ${data?.status === "LIVE" ? "border-[#32B846]" : "border-orange-400"}  p-5 rounded-md`}>
+        <div
+            onClick={() => onNavigate(data?.id, data?.status)}
+            className={`select-none grid grid-cols-3 gap-5 cursor-pointer text-base  items-center border-2 ${data?.status === "LIVE" ? "border-[#32B846]" : "border-orange-400"}  p-5 rounded-md`}
+        >
             <div className={"flex flex-col items-center"}>
                 <img src={data?.homeClub?.logo?.url} alt="#" className={"size-16 max-lg:size-14"}/>
                 <span className={"text-center w-24 leading-5"}>{data?.homeClub?.name}</span>
@@ -30,7 +43,7 @@ const MatchCard = ({data}: { data: MatchType }) => {
                 <img src={data?.awayClub?.logo?.url} alt="#" className={"size-16 max-lg:size-14"}/>
                 <span className={"text-center w-24 leading-5"}>{data?.awayClub?.name}</span>
             </div>
-        </Link>
+        </div>
     );
 };
 

@@ -4,20 +4,8 @@ import {useGetStream} from "../hooks/stream.ts";
 import {MatchStatus} from "../types/match";
 
 const VideoPlayer = ({streamKey, matchStatus}: { streamKey: string, matchStatus: MatchStatus }) => {
-    const videoRef = useRef<HTMLVideoElement | any>(null);
+    const videoRef = useRef<HTMLVideoElement | null>(null);
     const src = `${import.meta.env.VITE_STREAM_BASE_URL}/live/${streamKey}/index.m3u8`;
-
-    if (matchStatus === "SCHEDULED") {
-        return <div
-            className={"w-full max-lg:h-52 h-[500px] flex  gap-3 bg-gray-700 justify-center items-center"}
-        >
-            <h1 className={"w-2/3 text-center"}>O'yin boshlangach, shu joyda jonli efir paydo bo'ladi!</h1>
-        </div>
-    }
-
-    if (matchStatus === "FINISHED") {
-        return null
-    }
 
     const getStreamQuery = useGetStream(src);
 
@@ -29,6 +17,7 @@ const VideoPlayer = ({streamKey, matchStatus}: { streamKey: string, matchStatus:
         } else if (Hls.isSupported()) {
             const hls = new Hls();
             hls.loadSource(src);
+            // @ts-ignore
             hls.attachMedia(video);
         } else {
             console.error("HLS is not supported in this browser.");
@@ -36,12 +25,26 @@ const VideoPlayer = ({streamKey, matchStatus}: { streamKey: string, matchStatus:
     };
 
     useEffect(() => {
-        loadStream();
-    }, [streamKey]);
+        if (matchStatus === "LIVE") {
+            loadStream();
+        }
+    }, [streamKey, matchStatus]);
 
     const handleReload = () => {
-        window.location.reload()
+        window.location.reload();
     };
+
+    if (matchStatus === "SCHEDULED") {
+        return (
+            <div className={"w-full max-lg:h-52 h-[500px] flex gap-3 bg-gray-700 justify-center items-center"}>
+                <h1 className={"w-2/3 text-center"}>O'yin boshlangach, shu joyda jonli efir paydo bo'ladi!</h1>
+            </div>
+        );
+    }
+
+    if (matchStatus === "FINISHED") {
+        return null;
+    }
 
     if (getStreamQuery.isError) {
         return (

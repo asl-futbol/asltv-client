@@ -1,39 +1,31 @@
-import { Route, Routes} from "react-router-dom";
+import {Route, Routes} from "react-router-dom";
 import {Home, Match, Redirect} from "./pages";
-import {useAuthUser, useGetUser, UserType} from "./hooks/user.ts";
+import {useAuthUser} from "./hooks/user.ts";
 import WebApp from "@twa-dev/sdk";
 import {useEffect} from "react";
 
 const App = () => {
-    const user = WebApp.initDataUnsafe.user;
+    const user = WebApp.initDataUnsafe.user
     const authUserMutation = useAuthUser();
-    const getUserQuery = useGetUser(+user?.id!, !!user);
 
     useEffect(() => {
         if (user) {
-            const userData: UserType = getUserQuery.data?.data?.info;
-
-            if (!userData || !getUserQuery.isFetching) {
-                authUserMutation.mutate({
-                    id: user?.id!,
-                    name: user?.first_name,
-                    username: user?.username,
-                    surname: user?.last_name,
-                    registeredBy: "WEB_APP",
-                });
-            }
-
-            localStorage.setItem("userId", String(user?.id!));
-            localStorage.setItem("name", String(user?.first_name!));
+            authUserMutation.mutate({
+                id: user?.id!,
+                name: user?.first_name,
+                username: user?.username,
+                surname: user?.last_name,
+                registeredBy: "WEB_APP",
+            });
         }
     }, []);
 
     if (authUserMutation.isPending) {
-        return <h1>Loading...</h1>
+        return <h1 className={"text-white"}>Loading...</h1>
     }
 
-    if (authUserMutation.isSuccess) {
-        localStorage.setItem("userPhoto", String(authUserMutation.data?.data?.info?.photo!));
+    if (authUserMutation.isError) {
+        return <h1>Error! Could not authenticate user</h1>;
     }
 
     return (
@@ -47,4 +39,4 @@ const App = () => {
     );
 };
 
-export default App;
+export default App

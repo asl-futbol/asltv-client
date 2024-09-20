@@ -1,4 +1,5 @@
 import axios from "axios";
+import WebApp from "@twa-dev/sdk";
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
@@ -29,5 +30,7 @@ api.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
+export const USER_ID_TELEGRAM = WebApp.initDataUnsafe?.user?.id || 791944079
 
 export {api};
