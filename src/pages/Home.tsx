@@ -9,7 +9,7 @@ import {Navigate} from "react-router-dom";
 const Home = () => {
     const getLiveMatchesQuery = useGetMatches(1, 10, "LIVE")
     const liveMatchesData: GetMatchesType = getLiveMatchesQuery?.data?.data
-    
+
     const getScheduledMatchesQuery = useGetMatches(1, 10, "SCHEDULED")
     const scheduledMatchesData: GetMatchesType = getScheduledMatchesQuery?.data?.data
 

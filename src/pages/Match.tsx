@@ -38,7 +38,7 @@ const Match: React.FC = () => {
                         <span
                             className={"text-base font-bold text-white/90"}
                         >
-                            {singleMatchData?.homeClub?.name} vs {singleMatchData?.awayClub?.name}
+                            {singleMatchData?.homeClub?.name} x {singleMatchData?.awayClub?.name}
                         </span>
                     </div>
                 </div>
