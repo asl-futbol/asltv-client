@@ -5,7 +5,6 @@ import "plyr-react/plyr.css";
 import {useGetSingleMatch} from "../hooks/match.ts";
 import {MatchType} from "../types/match";
 import Loader from "../components/loader.tsx";
-import Chat from "./Chat.tsx";
 import {USER_ID_TELEGRAM} from "../api";
 import Viewers from "../components/viewers.tsx";
 import {VideoPlayer} from "../components";
@@ -30,6 +29,7 @@ const Match: React.FC = () => {
         return <h1 className={"text-center text-white/80"}>Nimadir xato ketdi, keyinroq qayta urining!</h1>
     }
 
+   
     return (
         <div className="flex flex-col gap-1 text-white">
             <div className={"max-lg:fixed w-full flex flex-col bg-[#272727]"}>
@@ -48,13 +48,13 @@ const Match: React.FC = () => {
 
                 <div className={"flex flex-col px-5 border-b border-gray-400 py-3"}>
                     <div className={"flex justify-between"}>
-                        <h1 className={"text-xl"}>Chat</h1>
+                        <h1 className={"text-base"}>Jonli efir</h1>
                         <Viewers matchId={+matchId} userId={USER_ID_TELEGRAM.toString()}/>
                     </div>
                 </div>
             </div>
 
-            <Chat matchId={+matchId} userId={USER_ID_TELEGRAM}/>
+            {/*<Chat matchId={+matchId} userId={USER_ID_TELEGRAM}/>*/}
         </div>
     );
 };

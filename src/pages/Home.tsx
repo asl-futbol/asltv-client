@@ -3,16 +3,24 @@ import {Navbar} from "../components";
 import {useGetMatches} from "../hooks/match.ts";
 import {GetMatchesType} from "../types/match";
 import Loader from "../components/loader.tsx";
+import WebApp from "@twa-dev/sdk";
+import {Navigate} from "react-router-dom";
 
 const Home = () => {
     const getLiveMatchesQuery = useGetMatches(1, 10, "LIVE")
     const liveMatchesData: GetMatchesType = getLiveMatchesQuery?.data?.data
-
+    
     const getScheduledMatchesQuery = useGetMatches(1, 10, "SCHEDULED")
     const scheduledMatchesData: GetMatchesType = getScheduledMatchesQuery?.data?.data
 
     if (getScheduledMatchesQuery.isLoading || getLiveMatchesQuery.isLoading) {
         return <Loader/>
+    }
+
+    const matchId = WebApp.initDataUnsafe.start_param
+
+    if (matchId) {
+        return <Navigate to={`/match/${matchId}`}/>
     }
 
     return (
