@@ -78,7 +78,7 @@ const Chat: React.FC<{ matchId: number; userId: number }> = ({matchId, userId}) 
     return (
         <div className={"flex flex-col justify-between w-full h-full"}>
             <div
-                className={`flex flex-col max-lg:gap-2 gap-3 mt-3 px-5 overflow-y-auto max-h-[400px]`}
+                className={`flex flex-col max-lg:gap-2 gap-3 mt-3 px-5 overflow-y-auto max-h-[200px]`}
             >
                 {
                     messages.map((item, index) => (
