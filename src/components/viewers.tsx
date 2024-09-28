@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {MdOutlinePerson} from 'react-icons/md';
 import {io} from 'socket.io-client';
-import {formatViewers} from '../utils';
+import {formatViewers} from "../utils";
 
 interface ViewersProps {
     matchId: number;
@@ -28,11 +27,18 @@ const Viewers: React.FC<ViewersProps> = ({matchId, userId}) => {
     }, [matchId, userId]);
 
     return (
-        <div className="flex gap-1 items-center text-gray-400">
-            <MdOutlinePerson/>
 
-            <span className="text-sm self-center">
-                    {formatViewers(viewerCount)} kuzatuvchi
+        <div className={"flex bg-[#474747] text-[10px] items-center rounded"}>
+            <span
+                className={"px-2 bg-black text-white rounded-l-[5px]"}
+            >
+                Kuzatayotganlar
+            </span>
+
+            <span
+                className={"text-black bg-white px-1 rounded-r-[5px] min-w-10 text-center"}
+            >
+                {formatViewers(viewerCount || 0)}
             </span>
         </div>
     );

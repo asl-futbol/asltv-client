@@ -1,10 +1,10 @@
-import {MatchCard} from "../components/cards";
 import {Navbar} from "../components";
 import {useGetMatches} from "../hooks/match.ts";
 import {GetMatchesType} from "../types/match";
 import Loader from "../components/loader.tsx";
 import WebApp from "@twa-dev/sdk";
 import {Navigate} from "react-router-dom";
+import {MatchCard} from "../components/cards";
 
 const Home = () => {
     const getLiveMatchesQuery = useGetMatches(1, 10, "LIVE")
@@ -30,7 +30,7 @@ const Home = () => {
             <div className={"flex flex-col gap-14 pb-10 mt-6 px-4"}>
                 {
                     liveMatchesData?.matches?.length !== 0 && <div className={"flex flex-col gap-5"}>
-                        <h1 className={"text-2xl font-medium text-white"}>Jonli Translatsiyalar</h1>
+                        <h1 className={"text-base font-medium text-white"}>Jonli Translatsiyalar</h1>
 
                         <div className={"grid grid-cols-4 gap-5 max-lg:grid-cols-1"}>
                             {liveMatchesData?.matches?.map(match => (
@@ -41,7 +41,7 @@ const Home = () => {
                 }
 
                 <div className={"flex flex-col gap-5"}>
-                    <h1 className={"text-2xl font-medium text-white"}>Rejalashtirilgan</h1>
+                    <h1 className={"text-base font-medium text-white"}>Rejalashtirilgan</h1>
 
                     {
                         scheduledMatchesData?.matches?.length === 0
