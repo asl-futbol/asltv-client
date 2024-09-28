@@ -5,6 +5,7 @@ export type MatchType = {
     date: string,
     status: MatchStatus,
     isActive: true,
+    poster: string,
     homeClub: {
         id: number,
         name: string,

@@ -43,7 +43,7 @@ const Match: React.FC = () => {
                     <span className={"text-sm"}>Chiqish</span>
                 </div>
 
-                <VideoPlayer streamKey={singleMatchData?.stream?.key} matchStatus={singleMatchData?.status}/>
+                <VideoPlayer {...singleMatchData}/>
 
                 <div className={"flex flex-col gap-3 px-3  py-3 text-sm bg-[#353535]"}>
                     <div
