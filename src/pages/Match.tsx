@@ -61,7 +61,7 @@ const Match: React.FC = () => {
 
                         <div
                             onClick={() => setChatOpen(!isChatOpen)}
-                            className={"flex text-white gap-1 items-center font-lexend bg-[#273C75] rounded-[5px] py-1 px-2"}
+                            className={"hidden  text-white gap-1 items-center font-lexend bg-[#273C75] rounded-[5px] py-1 px-2"}
                         >
                             {
                                 !isChatOpen ? <>
