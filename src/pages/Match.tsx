@@ -9,7 +9,6 @@ import {IoChatboxEllipsesOutline} from "react-icons/io5";
 import Chat from "./Chat.tsx";
 import {IoMdClose} from "react-icons/io";
 import {USER_ID_TELEGRAM} from "../api";
-import {VideoPlayer} from "../components";
 import Viewers from "../components/viewers.tsx";
 
 
@@ -43,7 +42,16 @@ const Match: React.FC = () => {
                     <span className={"text-sm"}>Chiqish</span>
                 </div>
 
-                <VideoPlayer {...singleMatchData}/>
+                {/*<VideoPlayer {...singleMatchData}/>*/}
+
+                <iframe
+                    src={singleMatchData?.stream?.key}
+                    width="100%"
+                    allow="autoplay"
+                    height={"200px"}
+                    allowFullScreen
+                >
+                </iframe>
 
                 <div className={"flex flex-col gap-3 px-3  py-3 text-sm bg-[#353535]"}>
                     <div
