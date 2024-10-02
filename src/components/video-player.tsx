@@ -7,12 +7,13 @@ import Hls from "hls.js";
 import {queryClient} from "../main.tsx";
 import {QueryKeys} from "../hooks/queryKeys.ts";
 
+// @ts-ignore
 const VideoPlayer = ({status, stream, poster}: MatchType) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const videoRef = useRef<HTMLVideoElement | null>(null);
-    const src = `${import.meta.env.VITE_STREAM_BASE_URL}/live/${stream?.key}/index.m3u8`;
+    const src = stream.key;
     const getStreamQuery = useGetStream(src, isPlaying);
 
     const loadStream = () => {
@@ -92,7 +93,7 @@ const VideoPlayer = ({status, stream, poster}: MatchType) => {
     if (status === "FINISHED") {
         return null;
     }
-    
+
     return (
         <div
             className={`h-[200px] w-full bg-cover bg-center flex justify-center items-center ${(getStreamQuery.isFetching || isLoading) ? "animate-pulse" : ""}`}
