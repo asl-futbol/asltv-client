@@ -44,14 +44,14 @@ const Match: React.FC = () => {
                 </div>
 
                 <ReactPlayer
-                    url="https://stream8.itv.uz/t/Lxjat02hI2LKV-isdbvs8g/e/1727986166/1263/tracks-v2a1/mono.m3u8"
+                    url={singleMatchData?.stream?.key}
                     controls
                     playing
                     width="100%"
                     height="100%"
                     config={{
                         file: {
-                            forceHLS: true, // Forces HLS for .m3u8 streams
+                            forceHLS: true,
                         },
                     }}
                 />
