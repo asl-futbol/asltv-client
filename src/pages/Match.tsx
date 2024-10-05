@@ -10,7 +10,7 @@ import Chat from "./Chat.tsx";
 import {IoMdClose} from "react-icons/io";
 import {USER_ID_TELEGRAM} from "../api";
 import Viewers from "../components/viewers.tsx";
-import ReactPlayer from "react-player";
+import {VideoPlayer} from "../components";
 
 
 const Match: React.FC = () => {
@@ -43,20 +43,7 @@ const Match: React.FC = () => {
                     <span className={"text-sm"}>Chiqish</span>
                 </div>
 
-                <ReactPlayer
-                    url={singleMatchData?.stream?.key}
-                    controls
-                    playing
-                    width="100%"
-                    height="100%"
-                    config={{
-                        file: {
-                            forceHLS: true,
-                        },
-                    }}
-                />
-
-                {/*<VideoPlayer {...singleMatchData}/>*/}
+                <VideoPlayer {...singleMatchData}/>
 
                 <div className={"flex flex-col gap-3 px-3  py-3 text-sm bg-[#353535]"}>
                     <div
