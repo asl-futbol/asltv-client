@@ -13,7 +13,7 @@ const VideoPlayer = ({status, stream, poster}: MatchType) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const videoRef = useRef<HTMLVideoElement | null>(null);
-    const src = `https://stream8.itv.uz/t/Lxjat02hI2LKV-isdbvs8g/e/1727986166/1263/tracks-v2a1/mono.m3u8`
+    const src = `${import.meta.env.VITE_STREAM_BASE_URL}/live/${stream?.key}/index.m3u8`;
     const getStreamQuery = useGetStream(src, isPlaying);
 
     const loadStream = () => {
