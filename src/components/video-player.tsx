@@ -13,7 +13,7 @@ const VideoPlayer = ({status, stream, poster}: MatchType) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const videoRef = useRef<HTMLVideoElement | null>(null);
-    const src = `${import.meta.env.VITE_STREAM_BASE_URL}/live/${stream?.key}/index.m3u8`;
+    const src = `https://hls.fakilikito.com/hls/channel6/channel6/playlist.m3u8?token=b3e90915fdec850c1a8a56f893605472-0.5624656982282787-0.04369561244579079`;
     const getStreamQuery = useGetStream(src, isPlaying);
 
     const loadStream = () => {
