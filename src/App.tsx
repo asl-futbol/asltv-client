@@ -27,7 +27,7 @@ const App = () => {
     if (authUserMutation.isError) {
         return <h1>Error! Could not authenticate user</h1>;
     }
-
+    
     return (
         <div className={"text-white"}>
             <Routes>

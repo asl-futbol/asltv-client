@@ -15,7 +15,7 @@ const MatchCard = ({data}: { data: MatchType }) => {
     return (
         <div
             onClick={() => onNavigate(data?.id, data?.status)}
-            className={`${data.status === "LIVE" ? "border-[5px] border-[#FF0000] py-7 shadow-[0px_0px_10px_0.5px_#FF0000]" : "border-[2px] border-white"} rounded-[15px] flex justify-between items-center py-5 px-7 font-lexend bg-[#222222] bg-contain bg-no-repeat bg-left`}
+            className={`cursor-pointer ${data.status === "LIVE" ? "border-[5px] border-[#FF0000] py-7 shadow-[0px_0px_10px_0.5px_#FF0000]" : "border-[2px] border-white"} rounded-[15px] flex justify-between items-center py-5 px-7 font-lexend bg-[#222222] bg-contain bg-no-repeat bg-left`}
             style={{backgroundImage: `url(/apl.svg)`}}
         >
             <div className={"flex flex-col items-center"}>
@@ -49,7 +49,7 @@ const MatchCard = ({data}: { data: MatchType }) => {
                             </div>
 
                         </div> :
-                        <h1>Fuck off!</h1>
+                        <h1>Something</h1>
             }
 
             <div className={"flex flex-col items-center"}>

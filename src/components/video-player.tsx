@@ -13,7 +13,7 @@ const VideoPlayer = ({status, stream, poster}: MatchType) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const videoRef = useRef<HTMLVideoElement | null>(null);
-    const src = `${import.meta.env.VITE_STREAM_BASE_URL}/live/${stream?.key}/index.m3u8`;
+    const src = stream?.key
     const getStreamQuery = useGetStream(src, isPlaying);
 
     const loadStream = () => {
@@ -57,7 +57,8 @@ const VideoPlayer = ({status, stream, poster}: MatchType) => {
 
     if (getStreamQuery.isError) {
         return (
-            <div className="w-full max-lg:h-52 h-[500px] flex flex-col gap-3 bg-gray-700 justify-center items-center">
+            <div
+                className="cursor-pointer w-full max-lg:h-52 h-[500px] flex flex-col gap-3 bg-gray-700 justify-center items-center">
                 <h1>Jonli efir namoyish etilmayapti</h1>
                 <button
                     className="bg-blue-600 px-4 py-2 max-lg:text-sm rounded-md text-white"
@@ -96,7 +97,7 @@ const VideoPlayer = ({status, stream, poster}: MatchType) => {
 
     return (
         <div
-            className={`h-[200px] w-full bg-cover bg-center flex justify-center items-center ${(getStreamQuery.isFetching || isLoading) ? "animate-pulse" : ""}`}
+            className={`h-[200px] cursor-pointer w-full bg-cover bg-center flex justify-center items-center ${(getStreamQuery.isFetching || isLoading) ? "animate-pulse" : ""}`}
             style={{
                 backgroundImage: `url(${poster})`,
             }}
